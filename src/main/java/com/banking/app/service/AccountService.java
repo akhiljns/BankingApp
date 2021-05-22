@@ -2,6 +2,7 @@ package com.banking.app.service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // import com.banking.app.exception.InvalidAccountNumberException;
 import com.banking.app.exception.NotEnoughBalanceException;
@@ -25,16 +26,18 @@ public class AccountService {
     private TransactionRepository transactionRepository;
 
     public Account createAccount(Account account) {
+
         accountRepository.save(account);
-        return accountRepository.getById(account.getAccountNumber());
+
+        return accountRepository.findById(account.getAccount_number()).get();
     }
 
-    public List<Account> findAll() {
-        return accountRepository.findAll();
-    }
+    // public List<Account> findAll() {
+    //     return accountRepository.findAll();
+    // }
 
     public Account findAccountByAccNo(Long accountNo) {
-        Account account = accountRepository.getById(accountNo);
+        Account account = accountRepository.findById(accountNo).get();
         return account;
     }
 
@@ -45,18 +48,18 @@ public class AccountService {
 
         Double amount = transactionDto.getAmount();
 
-        Account fromAccount = accountRepository.getById(fromAccountNumber);
-        Account toAccount = accountRepository.getById(toAccountNumber);
+        Account fromAccount = accountRepository.findById(fromAccountNumber).get();
+        Account toAccount = accountRepository.findById(toAccountNumber).get();
 
-        if (fromAccount.getBalanceValue() >= amount) {
-            fromAccount.setBalanceValue(fromAccount.getBalanceValue() - amount);
+        if (fromAccount.getBalance_value() >= amount) {
+            fromAccount.setBalance_value(fromAccount.getBalance_value() - amount);
             Transaction transactionDebit = transactionRepository.save(new Transaction(fromAccountNumber,
                     TransactionType.DEBIT, amount, new Timestamp(System.currentTimeMillis())));
             fromAccount.getTransactions().add(transactionDebit);
             accountRepository.save(fromAccount);
 
             // update recepient
-            toAccount.setBalanceValue(toAccount.getBalanceValue() + amount);
+            toAccount.setBalance_value(toAccount.getBalance_value() + amount);
             Transaction transactionCredit = transactionRepository.save(new Transaction(fromAccountNumber,
                     TransactionType.CREDIT, amount, new Timestamp(System.currentTimeMillis())));
             toAccount.getTransactions().add(transactionCredit);
@@ -69,8 +72,12 @@ public class AccountService {
 
     }
 
-    public List<Transaction> getStatement(Long accountNo) {
-        Account account = accountRepository.getById(accountNo);
-        return account.getTransactions();
+    public List<Transaction> getStatement(Long accountNo, Timestamp fromTime, Timestamp toTime) {
+        Account account = accountRepository.findById(accountNo).get();
+
+        return account.getTransactions().stream().filter(
+                a -> fromTime.after(a.getTransaction_timestamp()) && toTime.before(a.getTransaction_timestamp()))
+                .collect(Collectors.toList());
+
     }
 }

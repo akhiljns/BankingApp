@@ -1,46 +1,37 @@
 package com.banking.app.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
 @Entity
-@Table(name = "account")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Table(name = "ACCOUNT")
 public class Account {
 
-    @Builder
-    public Account(Double balanceValue, List<Transaction> transactions) {
-        this.balanceValue = balanceValue;
-        this.transactions = transactions;
-    }
-
     @Id
-    @GeneratedValue
-    @Getter
-    private Long accountNumber;
+    private Long account_number;
 
-    @Getter
-    @Setter
     @Column
-    private Double balanceValue;
+    private Double balance_value;
 
-    @Getter
-    @Setter
     @JoinColumn
     @OneToMany(cascade = { CascadeType.ALL })
-    private List<Transaction> transactions;
+    private List<Transaction> transactions = new ArrayList<>();
 
 }

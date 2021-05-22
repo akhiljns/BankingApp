@@ -4,48 +4,31 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
 @Entity
-@Table(name = "transaction")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Table(name = "TRANSACTION")
 public class Transaction {
     @Id
-    @GeneratedValue
-    private Long transactionId;
+    private Long transaction_id;
 
-    public Transaction(Long accountNumber, TransactionType transactionType, Double transactionAmount,
-            Timestamp transactionTimestamp) {
-        this.accountNumber = accountNumber;
-        this.transactionType = transactionType;
-        this.transactionAmount = transactionAmount;
-        this.transactionTimestamp = transactionTimestamp;
-    }
-
-    @Getter
-    @Setter
     @Column
-    private Long accountNumber;
+    private TransactionType transaction_type;
 
-    @Getter
-    @Setter
     @Column
-    private TransactionType transactionType;
+    private Double transaction_amount;
 
-    @Getter
-    @Setter
     @Column
-    private Double transactionAmount;
-
-    @Getter
-    @Setter
-    @Column
-    private Timestamp transactionTimestamp;
+    private Timestamp transaction_timestamp;
 
 }
