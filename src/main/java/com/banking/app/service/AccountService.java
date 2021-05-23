@@ -55,7 +55,6 @@ public class AccountService {
                     .save(new Transaction("DEBIT", amount, new Timestamp(System.currentTimeMillis())));
 
             fromAccount.getTransactions().add(transactionDebit);
-            // transactionRepository.save(transactionDebit);
             accountRepository.save(fromAccount);
 
             // update recepient
@@ -63,8 +62,7 @@ public class AccountService {
             Transaction transactionCredit = transactionRepository
                     .save(new Transaction("CREDIT", amount, new Timestamp(System.currentTimeMillis())));
 
-            fromAccount.getTransactions().add(transactionCredit);
-            // transactionRepository.save(transactionCredit);
+            toAccount.getTransactions().add(transactionCredit);
             accountRepository.save(toAccount);
 
             return transactionDebit;
