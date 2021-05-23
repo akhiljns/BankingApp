@@ -16,7 +16,7 @@ I have also kept jar of the project which can be run without having to build usi
 - java -jar target/app-0.0.1-SNAPSHOT.jar
 
 ## testing the project APIs using postman or curl
-
+```
 1) OPEN ACCOUNTS
 HTTP method - POST
 url - http://localhost:8080/account/open
@@ -93,6 +93,9 @@ curl -X PUT -H 'Content-Type: application/json' -i http://localhost:8080/account
 
 HTTP method - POST 
 url - http://localhost:8080/account/statement
+
+if fromTimetsamp and toTimestamp is not given then it will return all the transaction for a 
+particular account
 REQUEST BODY sample data - 
 {
   "accNo":1,
@@ -107,10 +110,14 @@ curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/accoun
 "fromTimestamp":"2021-05-22T23:11:50.934+00:00",
 "toTimestamp":"2021-05-22T23:40:50.934+00:00"
 }'
-
+```
 ## steps to view the database using h2 console on web browser
 
 url to hit on browser http://localhost:8080/h2-console/
+then
 click on connect button
 
+
+NOTE regarding data-h2.sql
+inserting into transaction values has been commented out as they follow auto generated value
 

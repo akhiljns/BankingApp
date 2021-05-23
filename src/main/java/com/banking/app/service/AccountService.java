@@ -6,10 +6,8 @@ import java.util.stream.Collectors;
 
 import com.banking.app.exception.InvalidAccountNumberException;
 import com.banking.app.exception.NotEnoughBalanceException;
-
 import com.banking.app.model.Account;
 import com.banking.app.model.Transaction;
-import com.banking.app.model.TransactionType;
 import com.banking.app.model.dto.TransactionDto;
 import com.banking.app.repository.AccountRepository;
 import com.banking.app.repository.TransactionRepository;
