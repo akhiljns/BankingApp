@@ -4,8 +4,9 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// import com.banking.app.exception.InvalidAccountNumberException;
+import com.banking.app.exception.InvalidAccountNumberException;
 import com.banking.app.exception.NotEnoughBalanceException;
+
 import com.banking.app.model.Account;
 import com.banking.app.model.Transaction;
 import com.banking.app.model.TransactionType;
@@ -33,7 +34,7 @@ public class AccountService {
     }
 
     // public List<Account> findAll() {
-    //     return accountRepository.findAll();
+    // return accountRepository.findAll();
     // }
 
     public Account findAccountByAccNo(Long accountNo) {
@@ -41,7 +42,10 @@ public class AccountService {
         return account;
     }
 
-    public Transaction sendMoney(TransactionDto transactionDto) {
+    public Transaction createTransaction(TransactionDto transactionDto) {
+
+        if (transactionDto.getRecepientAccountNo() == null || transactionDto.getRecepientAccountNo() == null)
+            throw new InvalidAccountNumberException("Account does not exist");
 
         Long fromAccountNumber = transactionDto.getSenderAccountNo();
         Long toAccountNumber = transactionDto.getRecepientAccountNo();
@@ -54,15 +58,18 @@ public class AccountService {
         if (fromAccount.getBalance_value() >= amount) {
             fromAccount.setBalance_value(fromAccount.getBalance_value() - amount);
             Transaction transactionDebit = transactionRepository.save(new Transaction(fromAccountNumber,
-                    TransactionType.DEBIT, amount, new Timestamp(System.currentTimeMillis())));
-            fromAccount.getTransactions().add(transactionDebit);
+                    TransactionType.DEBIT, amount, new Timestamp(System.currentTimeMillis()), fromAccount));
+
+            transactionRepository.save(transactionDebit);
             accountRepository.save(fromAccount);
 
             // update recepient
             toAccount.setBalance_value(toAccount.getBalance_value() + amount);
             Transaction transactionCredit = transactionRepository.save(new Transaction(fromAccountNumber,
-                    TransactionType.CREDIT, amount, new Timestamp(System.currentTimeMillis())));
+                    TransactionType.CREDIT, amount, new Timestamp(System.currentTimeMillis()), toAccount));
             toAccount.getTransactions().add(transactionCredit);
+
+            transactionRepository.save(transactionCredit);
             accountRepository.save(toAccount);
 
             return transactionDebit;

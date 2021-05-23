@@ -9,7 +9,6 @@ import com.banking.app.service.AccountService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,13 +27,18 @@ public class AccountController {
         return accountService.createAccount(account);
     }
 
-    @PutMapping("/sendmoney")
-    public ResponseEntity<Transaction> sendMoney(@RequestBody TransactionDto dto) {
-        return ResponseEntity.ok().body(accountService.sendMoney(dto));
+    @PutMapping("/createTransaction")
+    public Transaction createTransaction(@RequestBody TransactionDto dto) {
+        return accountService.createTransaction(dto);
     }
 
-    @GetMapping("/statement")
-    public ResponseEntity<BankStatement> getStatement(@RequestBody SummaryDto summaryDto) {
+    /**
+     * @GetMapping("/statement") this is also allowed since any http method allows
+     * requestbody but postmand does not append requestbodt with GET HTTP METHOD
+     * hence using postmapping
+     */
+    @PostMapping("/statement")
+    public BankStatement getStatement(@RequestBody SummaryDto summaryDto) {
 
         BankStatement bs = new BankStatement();
 
@@ -43,7 +47,7 @@ public class AccountController {
         bs.setTransactions(accountService.getStatement(summaryDto.getAccNo(), summaryDto.getFromTimestamp(),
                 summaryDto.getToTimestamp()));
 
-        return ResponseEntity.ok().body(bs);
+        return bs;
 
     }
 

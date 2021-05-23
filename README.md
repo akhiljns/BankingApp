@@ -1,4 +1,4 @@
-# following project contains the repository for sample hall booking system
+# following project contains the repository for sample banking app
 
 
 requirements - 
@@ -13,59 +13,100 @@ java
 OR
 
 I have also kept jar of the project which can be run without having to build using maven build by (from project home directory)
-- java -jar target/hallBookingSystem-0.0.1-SNAPSHOT.jar
+- java -jar target/app-0.0.1-SNAPSHOT.jar
 
 ## testing the project APIs using postman or curl
 
-1) RESERVE A HALL
-
-HTTP method - POST 
-url - http://localhost:8080/booker/halls/book
-post sample data - 
+1) OPEN ACCOUNTS
+HTTP method - POST
+url - http://localhost:8080/account/open
+REQUEST BODY sample data - 
 {
-    "booking_Id":2,
-    "capacity":100,
-    "start_Time":"2019-12-31T02:00:00",
-    "end_Time":"2019-12-31T03:00:00"
-}
-
-sample curl command for the same - 
-
-curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/booker/halls/book --data '{
-"booking_Id":2,
-"capacity":100,
-"start_Time":"2019-12-31T02:00:00",
-"end_Time":"2019-12-31T03:00:00"
-}'
-
-sample response - 
-{
-  "hall_id": 2,
-  "capacity": 100,
-  "request": [{
-    "booking_Id": 1,
-    "capacity": 100,
-    "start_Time": "2019-12-31T02:00:00.000+00:00",
-    "end_Time": "2019-12-31T03:00:00.000+00:00"
+  "account_number":1,
+  "balance_value":234,
+  "transactions": [{
+    "transaction_id": 1,
+    "transaction_type": "CREDIT",
+    "transaction_amount": 2,
+    "transaction_timestamp": "2021-04-29T03:00:00.000+00:00"
+  },
+  {
+    "transaction_id": 3,
+    "transaction_type": "CREDIT",
+    "transaction_amount": 3,
+    "transaction_timestamp": "2021-04-30T03:00:00.000+00:00"
+  },
+  {
+    "transaction_id": 2,
+    "transaction_type": "DEBIT",
+    "transaction_amount": 1,
+    "transaction_timestamp": "2021-03-30T03:00:00.000+00:00"
   }]
 }
 
-2) FETCH DETAILS OF SCHEDULED SEMINARS FOR A DATE RANGE
-
-HTTP method - GET 
-url - http://localhost:8080/booker/seminars/2019-12-31 02:00:00/2020-01-31 02:00:00
+curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/account/open --data '{
+  "account_number":1,
+  "balance_value":234,
+  "transactions": [{
+    "transaction_id": 1,
+    "transaction_type": "CREDIT",
+    "transaction_amount": 2,
+    "transaction_timestamp": "2021-04-29T03:00:00.000+00:00"
+  },
+  {
+    "transaction_id": 3,
+    "transaction_type": "CREDIT",
+    "transaction_amount": 3,
+    "transaction_timestamp": "2021-04-30T03:00:00.000+00:00"
+  },
+  {
+    "transaction_id": 2,
+    "transaction_type": "DEBIT",
+    "transaction_amount": 1,
+    "transaction_timestamp": "2021-03-30T03:00:00.000+00:00"
+  }]
+}'
 
 sample curl command for the same - 
 
-curl -X GET -i 'http://localhost:8080/booker/seminars/2019-12-31 02:00:00/2020-01-31 02:00:00'
+2) CREATE TRANSACTIONS
 
-sample response - 
-[{
-  "booking_Id": 1,
-  "capacity": 100,
-  "start_Time": "2019-12-31T02:00:00.000+00:00",
-  "end_Time": "2019-12-31T03:00:00.000+00:00"
-}]
+HTTP method - PUT 
+url - http://localhost:8080/account/createTransaction 
+REQUEST BODY sample data - 
+{
+    "senderAccountNo":2,
+    "recepientAccountNo":1,
+    "amount":2
+}
+
+sample curl command for the same - 
+
+curl -X PUT -H 'Content-Type: application/json' -i http://localhost:8080/account/createTransaction --data '{
+"senderAccountNo":1,
+"recepientAccountNo":2,
+"amount":2
+}'
+
+
+3) FETCH STATEMENT OF AN ACCOUNT
+
+HTTP method - POST 
+url - http://localhost:8080/account/statement
+REQUEST BODY sample data - 
+{
+  "accNo":1,
+  "fromTimestamp":"2021-05-22T23:11:50.934+00:00",
+  "toTimestamp":"2021-05-22T23:40:50.934+00:00",
+}
+
+sample curl command for the same - 
+
+curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/account/statement --data '{
+"accNo":1,
+"fromTimestamp":"2021-05-22T23:11:50.934+00:00",
+"toTimestamp":"2021-05-22T23:40:50.934+00:00"
+}'
 
 ## steps to view the database using h2 console on web browser
 
