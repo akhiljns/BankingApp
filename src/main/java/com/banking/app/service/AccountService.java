@@ -33,10 +33,6 @@ public class AccountService {
         return accountRepository.findById(account.getAccount_number()).get();
     }
 
-    // public List<Account> findAll() {
-    // return accountRepository.findAll();
-    // }
-
     public Account findAccountByAccNo(Long accountNo) {
         Account account = accountRepository.findById(accountNo).get();
         return account;
@@ -57,19 +53,20 @@ public class AccountService {
 
         if (fromAccount.getBalance_value() >= amount) {
             fromAccount.setBalance_value(fromAccount.getBalance_value() - amount);
-            Transaction transactionDebit = transactionRepository.save(new Transaction(fromAccountNumber,
-                    TransactionType.DEBIT, amount, new Timestamp(System.currentTimeMillis()), fromAccount));
+            Transaction transactionDebit = transactionRepository
+                    .save(new Transaction("DEBIT", amount, new Timestamp(System.currentTimeMillis())));
 
-            transactionRepository.save(transactionDebit);
+            fromAccount.getTransactions().add(transactionDebit);
+            // transactionRepository.save(transactionDebit);
             accountRepository.save(fromAccount);
 
             // update recepient
             toAccount.setBalance_value(toAccount.getBalance_value() + amount);
-            Transaction transactionCredit = transactionRepository.save(new Transaction(fromAccountNumber,
-                    TransactionType.CREDIT, amount, new Timestamp(System.currentTimeMillis()), toAccount));
-            toAccount.getTransactions().add(transactionCredit);
+            Transaction transactionCredit = transactionRepository
+                    .save(new Transaction("CREDIT", amount, new Timestamp(System.currentTimeMillis())));
 
-            transactionRepository.save(transactionCredit);
+            fromAccount.getTransactions().add(transactionCredit);
+            // transactionRepository.save(transactionCredit);
             accountRepository.save(toAccount);
 
             return transactionDebit;
@@ -82,9 +79,13 @@ public class AccountService {
     public List<Transaction> getStatement(Long accountNo, Timestamp fromTime, Timestamp toTime) {
         Account account = accountRepository.findById(accountNo).get();
 
-        return account.getTransactions().stream().filter(
-                a -> fromTime.after(a.getTransaction_timestamp()) && toTime.before(a.getTransaction_timestamp()))
-                .collect(Collectors.toList());
+        if (fromTime == null)
+            return account.getTransactions();
+
+        else
+            return account.getTransactions().stream().filter(
+                    a -> fromTime.after(a.getTransaction_timestamp()) && toTime.before(a.getTransaction_timestamp()))
+                    .collect(Collectors.toList());
 
     }
 }

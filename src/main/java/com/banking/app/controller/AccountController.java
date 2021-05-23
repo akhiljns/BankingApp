@@ -28,8 +28,8 @@ public class AccountController {
     }
 
     @PutMapping("/createTransaction")
-    public Transaction createTransaction(@RequestBody TransactionDto dto) {
-        return accountService.createTransaction(dto);
+    public ResponseEntity<Transaction> createTransaction(@RequestBody TransactionDto dto) {
+        return ResponseEntity.ok().body(accountService.createTransaction(dto));
     }
 
     /**
@@ -38,7 +38,7 @@ public class AccountController {
      * hence using postmapping
      */
     @PostMapping("/statement")
-    public BankStatement getStatement(@RequestBody SummaryDto summaryDto) {
+    public ResponseEntity<BankStatement> getStatement(@RequestBody SummaryDto summaryDto) {
 
         BankStatement bs = new BankStatement();
 
@@ -47,7 +47,7 @@ public class AccountController {
         bs.setTransactions(accountService.getStatement(summaryDto.getAccNo(), summaryDto.getFromTimestamp(),
                 summaryDto.getToTimestamp()));
 
-        return bs;
+        return ResponseEntity.ok().body(bs);
 
     }
 
